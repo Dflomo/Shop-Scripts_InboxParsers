@@ -23,13 +23,13 @@ function inboxCounter() {
   var messSubject;
   
   //Item Counter Spreadsheet Variables
-  var mILink = "https://docs.google.com/spreadsheets/d/1CRlCJ3j-PowVRxtc3Gj2ujmJqJ2RLjtFGjWflQHJGPM/edit?usp=sharing";
+  var mILink = "";
   var mISS = SpreadsheetApp.openByUrl(mILink);
   var mItemCurrSS = mISS.getSheets()[mISS.getSheets().length -1];
   var mItemTemp = mISS.getSheetByName("Template");
   
-  //Inbox Parsed Info Spreadsheet Variables
-  var ssURL = "https://docs.google.com/spreadsheets/d/13izV5FunvRCHi9x8bEhLDcUAeid7abPpL6-dcpomq8k/edit#gid=9654033";
+  //Inbox Parsed - Info Spreadsheet Variables
+  var ssURL = "";
   var ss = SpreadsheetApp.openByUrl(ssURL);
   var ssSheet = ss.getSheets()[ss.getSheets().length -1];
   var ssTemplate = ss.getSheetByName("Template");
@@ -52,6 +52,7 @@ function inboxCounter() {
   
   ////Script Properties Variables
   var scriptProperties = PropertiesService.getScriptProperties();  
+  //  You MUST uncomment the first time you run the code. YOU MUST re-comment after it runs the first time!
   //  var newProp = {startRange: 1522413000000, sixTime: 1522414800000, tenTime: 1522472400000, endRange: 1522474200000};
   //  scriptProperties.setProperties(newProp);
   var startRange = scriptProperties.getProperty("startRange"); 
@@ -74,11 +75,13 @@ function inboxCounter() {
       var eMess = threadID[i].getMessages();
       messSubject = threadID[i].getFirstMessageSubject();
       emailTime = threadID[i].getLastMessageDate();
-      Logger.log("\n\n" + messSubject);
-      Logger.log("Thread Time: " + threadID[i].getLastMessageDate().getTime());
-      Logger.log("Spread Time: " + spreadTime.getTime());
+      
+//       More Debugging if necessary
+//       Logger.log("\n\n" + messSubject);
+//       Logger.log("Thread Time: " + threadID[i].getLastMessageDate().getTime());
+//       Logger.log("Spread Time: " + spreadTime.getTime());
       timeComp = emailTime > spreadTime.getTime();
-      Logger.log ("Email > Spread?: " + timeComp);
+      
       
       ////CHECK - Comparison to see is the current eamil time is great than the previously recorded time in the Spreadsheet
       if(emailTime > spreadTime.getTime()){
@@ -116,12 +119,10 @@ function inboxCounter() {
             Logger.log("This is an order: " + messSubject);
             
             var tMess = eMess[counter].getPlainBody().toLowerCase();
-            //FOR - map contains the menu
+            //FOR - map contains the menu items in the exactly index of the item
             for(each in menuItems){
               
-              if(tMess.indexOf(each) > -1 && tMess.indexOf(orderBreakStatement) == -1){
-                Logger.log("\n\n" + tMess + " ---> Contains ---> " + "\n\n" );
-                Logger.log("---> " + each);
+              if(tMess.indexOf(each) > -1 && tMess.indexOf(orderBreakStatement) == -1){    
                 mapArray[counter] += 1
               }
               counter += 1;
@@ -139,6 +140,8 @@ function inboxCounter() {
       }
     }
     intendedTime = threadID[0].getLastMessageDate();
+    
+    //Matched the exactly space in the spreadsheet to the index of each element in this array/dictionary
     mItemCurrSS.appendRow([new Date(), mapArray[0], mapArray[1], mapArray[2], mapArray[3], mapArray[4], mapArray[5], 
                            mapArray[6], mapArray[7], mapArray[8], mapArray[9], mapArray[10], mapArray[11], mapArray[12], 
                            mapArray[13], mapArray[14], mapArray[15], mapArray[16], mapArray[17], mapArray[18], mapArray[19], 
